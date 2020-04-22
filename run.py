@@ -1,6 +1,6 @@
 import csv
 import argparse 
-
+import re
 
 def load_bundles(filename):
   BUNDLES = {}
@@ -62,12 +62,13 @@ from datetime import datetime
 def write_consolidated_items_file(BUNDLES, orders_file):
   PRODUCTS = load_orders(orders_file)
   PRODUCTS = consolidate_bundles(PRODUCTS, BUNDLES)
+  list_of_tuples = sorted(PRODUCTS.items(), key=lambda x: re.search("([A-Z])\w+", x[0]).group() ) 
   now = datetime.now()
 
   file = open(f"consolidated_items_{now.strftime('%m-%d-%Y')}.txt", 'w')
   file.write("Consolidated Items\n\n")
-  for key in PRODUCTS:
-    file.write(f"{PRODUCTS[key]} * {key}\n")
+  for tup in list_of_tuples:
+    file.write(f"{tup[1]} * {tup[0]}\n")
 
 def write_orders_by_person(BUNDLES, orders_file):
   now = datetime.now()
