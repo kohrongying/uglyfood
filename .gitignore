@@ -111,3 +111,5 @@ dmypy.json
 
 *.txt
 .DS_Store
+
+*.csv

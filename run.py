@@ -65,26 +65,31 @@ def write_consolidated_items_file(BUNDLES, orders_file):
   list_of_tuples = sorted(PRODUCTS.items(), key=lambda x: re.search("([A-Z])\w+", x[0]).group() ) 
   now = datetime.now()
 
-  file = open(f"consolidated_items_{now.strftime('%m-%d-%Y')}.txt", 'w')
-  file.write("Consolidated Items\n\n")
+  file = open(f"consolidated_items_{now.strftime('%m-%d-%Y')}.csv", 'w')
+  writer = csv.writer(file)
   for tup in list_of_tuples:
-    file.write(f"{tup[1]} * {tup[0]}\n")
+    writer.writerow([tup[1], tup[0]])
 
 def write_orders_by_person(BUNDLES, orders_file):
   now = datetime.now()
-  output_file = open(f"items_by_order_{now.strftime('%m-%d-%Y')}.txt", "w")
+  output_file = open(f"items_by_order_{now.strftime('%m-%d-%Y')}.csv", "w")
+  writer = csv.writer(output_file)
 
   with open(orders_file,'r') as file:
     reader = csv.reader(file)
     next(reader)
     for row in reader:
       order_number = row[1]
+      name = row[3]
+      writer.writerow([order_number, name])
+      
       order = row[11]
-      output_file.write(f"\n{order_number}\n")
       PRODUCTS = addOrder(order, {})
       PRODUCTS = consolidate_bundles(PRODUCTS, BUNDLES)
       for key in PRODUCTS:
-        output_file.write(f"{PRODUCTS[key]} * {key}\n")
+        writer.writerow([PRODUCTS[key], key])
+      writer.writerow(['',''])
+
 
 import os.path
 def valid_file(filename):
@@ -104,6 +109,6 @@ if  __name__ == '__main__':
     BUNDLES = load_bundles('bundles.txt')
     write_consolidated_items_file(BUNDLES, orders_file)
     write_orders_by_person(BUNDLES, orders_file)
-    print("Completed! Consolidated items and items by order txt files generated!")
+    print("Completed! Consolidated items and items by order csv files generated!")
   else:
     print("Invalid file")
