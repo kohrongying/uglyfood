@@ -1,6 +1,6 @@
 import csv
+import argparse 
 
-PRODUCTS = {}
 
 def load_bundles(filename):
   BUNDLES = {}
@@ -22,9 +22,9 @@ def load_bundles(filename):
     BUNDLES[bundle_name] = temp
   return BUNDLES
 
-def load_orders():
+def load_orders(orders_file):
   PRODUCTS = {}
-  with open('orders.csv','r') as file:
+  with open(orders_file,'r') as file:
     reader = csv.reader(file)
     next(reader)
     for row in reader:
@@ -59,8 +59,8 @@ def consolidate_bundles(PRODUCTS, BUNDLES):
 
 from datetime import datetime
 
-def write_consolidated_items_file(PRODUCTS, BUNDLES):
-  PRODUCTS = load_orders()
+def write_consolidated_items_file(BUNDLES, orders_file):
+  PRODUCTS = load_orders(orders_file)
   PRODUCTS = consolidate_bundles(PRODUCTS, BUNDLES)
   now = datetime.now()
 
@@ -69,11 +69,11 @@ def write_consolidated_items_file(PRODUCTS, BUNDLES):
   for key in PRODUCTS:
     file.write(f"{PRODUCTS[key]} * {key}\n")
 
-def write_orders_by_person(BUNDLES):
+def write_orders_by_person(BUNDLES, orders_file):
   now = datetime.now()
   output_file = open(f"items_by_order_{now.strftime('%m-%d-%Y')}.txt", "w")
 
-  with open('orders.csv','r') as file:
+  with open(orders_file,'r') as file:
     reader = csv.reader(file)
     next(reader)
     for row in reader:
@@ -85,7 +85,24 @@ def write_orders_by_person(BUNDLES):
       for key in PRODUCTS:
         output_file.write(f"{PRODUCTS[key]} * {key}\n")
 
-BUNDLES = load_bundles('bundles.txt')
+import os.path
+def valid_file(filename):
+  if os.path.isfile(filename) and filename[-3:] == 'csv':
+    return True
+  return False
 
-write_consolidated_items_file(PRODUCTS, BUNDLES)
-write_orders_by_person(BUNDLES)
+if  __name__ == '__main__':
+  parser = argparse.ArgumentParser("Process Uglyfood orders")
+  parser.add_argument('-f', '--file', dest='file', help='file name of orders')
+
+  args = parser.parse_args()
+  params = vars(args)
+  orders_file = params['file']
+  
+  if valid_file(orders_file):
+    BUNDLES = load_bundles('bundles.txt')
+    write_consolidated_items_file(BUNDLES, orders_file)
+    write_orders_by_person(BUNDLES, orders_file)
+    print("Completed! Consolidated items and items by order txt files generated!")
+  else:
+    print("Invalid file")

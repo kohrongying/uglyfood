@@ -1,5 +1,5 @@
 from unittest import TestCase, main
-from run import load_bundles, addOrder
+from run import load_bundles, addOrder, valid_file
 
 class TestMain(TestCase):
   def test_load_bundles(self):
@@ -17,6 +17,10 @@ class TestMain(TestCase):
     self.assertEqual(products['5 pc Fuji Apples'], 3)
     self.assertEqual(products['200g Honey Cherry Tomato'], 4)
 
+  def test_valid_file(self):
+    self.assertFalse(valid_file('orders'))
+    self.assertFalse(valid_file('nonexistent-file.csv'))
+    self.assertTrue(valid_file('orders.csv'))
 
 if __name__ == '__main__':
   main()
