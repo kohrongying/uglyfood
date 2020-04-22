@@ -10,4 +10,7 @@ Orders consolidater
 2. Save the orders csv in the same folder as this code. 
 3. Run `python run.py -f [filename]`
 eg. `python run.py -f orders.csv`
+
 Note: File has to be csv and has to exist.
+
+Note2: Sorting happens as it takes the first capital letter of the item. 
