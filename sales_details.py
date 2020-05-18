@@ -1,5 +1,5 @@
 import csv
-from datetime import datetime
+from utils import generate_csv_file_name
 
 
 def write_sales_details_file(orders_file):
@@ -19,7 +19,7 @@ def write_sales_details_file(orders_file):
             total_num_orders += 1
 
     # Write to csv
-    write_file = open(f"sales_generated_{datetime.now().strftime('%m-%d-%Y')}.csv", 'w')
+    write_file = open(generate_csv_file_name('sales_generated'), 'w')
     writer = csv.writer(write_file)
     writer.writerow(["Total Discount", total_discount])
     writer.writerow(['Total Sales', total_sales])

@@ -1,7 +1,8 @@
 import csv
 import re
-from datetime import datetime
 from sales_details import write_sales_details_file
+from utils import generate_csv_file_name
+
 
 def load_bundles(filename):
     BUNDLES = {}
@@ -66,17 +67,15 @@ def write_consolidated_items_file(BUNDLES, orders_file):
     PRODUCTS = load_orders(orders_file)
     PRODUCTS = consolidate_bundles(PRODUCTS, BUNDLES)
     list_of_tuples = sorted(PRODUCTS.items(), key=lambda x: re.search("([A-Z])\w+", x[0]).group())
-    now = datetime.now()
 
-    file = open(f"consolidated_items_{now.strftime('%m-%d-%Y')}.csv", 'w')
+    file = open(generate_csv_file_name('consolidated_items'), 'w')
     writer = csv.writer(file)
     for tup in list_of_tuples:
         writer.writerow([tup[1], tup[0]])
 
 
 def write_orders_by_person(BUNDLES, orders_file):
-    now = datetime.now()
-    output_file = open(f"items_by_order_{now.strftime('%m-%d-%Y')}.csv", "w")
+    output_file = open(generate_csv_file_name('items_by_order'), "w")
     writer = csv.writer(output_file)
 
     with open(orders_file, 'r') as file:
