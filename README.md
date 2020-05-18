@@ -1,6 +1,8 @@
 # Uglyfood
 
-Orders consolidater
+- Consolidate orders by person
+- Consolidate orders by sales item
+- Get sales details
 
 ### Dependencies: 
 - Python3
@@ -8,9 +10,8 @@ Orders consolidater
 ### How to run
 1. Update Bundle Information under `bundles.txt`. Leave one empty line between each bundle.
 2. Save the orders csv in the same folder as this code. 
-3. Run `python run.py -f [filename]`
-eg. `python run.py -f orders.csv`
+3. Run `python run.py`
 
-Note: File has to be csv and has to exist.
+Note: Orders file has to be csv and filename has to be `orders.csv`
 
 Note2: Sorting happens as it takes the first capital letter of the item. 
