@@ -1,9 +1,16 @@
 import csv
 import re
 from sales_details import write_sales_details_file
+from suppliers import write_suppliers_file
 from utils import generate_csv_file_name
+from os import path
 
-
+"""
+Takes in bundles.txt
+Builds a dictionary of 
+    key: Bundle Name
+    value: A list of items in bundle
+"""
 def load_bundles(filename):
     BUNDLES = {}
     with open(filename, 'r') as file:
@@ -47,7 +54,12 @@ def addOrder(order, PRODUCTS):
             PRODUCTS[product] = qty
     return PRODUCTS
 
-
+"""
+Takes in the products object and bundles object
+Returns consolidated items with 
+    key: item name
+    value: qty (integer)
+"""
 def consolidate_bundles(PRODUCTS, BUNDLES):
     for bundle_name in BUNDLES:
         if bundle_name in PRODUCTS:
@@ -63,10 +75,8 @@ def consolidate_bundles(PRODUCTS, BUNDLES):
     return PRODUCTS
 
 
-def write_consolidated_items_file(BUNDLES, orders_file):
-    PRODUCTS = load_orders(orders_file)
-    PRODUCTS = consolidate_bundles(PRODUCTS, BUNDLES)
-    list_of_tuples = sorted(PRODUCTS.items(), key=lambda x: re.search("([A-Z])\w+", x[0]).group())
+def write_consolidated_items_file(CONSOLIDATED):
+    list_of_tuples = sorted(CONSOLIDATED.items(), key=lambda x: re.search("([A-Z])\w+", x[0]).group())
 
     file = open(generate_csv_file_name('consolidated_items'), 'w')
     writer = csv.writer(file)
@@ -95,9 +105,21 @@ def write_orders_by_person(BUNDLES, orders_file):
 
 
 if __name__ == '__main__':
+
+    # File paths
     orders_file = 'orders.csv'
-    BUNDLES = load_bundles('bundles.txt')
-    write_consolidated_items_file(BUNDLES, orders_file)
+    suppliers_file = 'suppliers.txtt'
+    bundles_file = 'bundles.txt'
+
+    # Common utils / helpers
+    BUNDLES = load_bundles(bundles_file)
+    PRODUCTS = load_orders(orders_file)
+    CONSOLIDATED = consolidate_bundles(PRODUCTS, BUNDLES)
+
+    # write CSV calls
+    write_consolidated_items_file(CONSOLIDATED)
     write_orders_by_person(BUNDLES, orders_file)
     write_sales_details_file(orders_file)
+    if path.exists(suppliers_file):
+        write_suppliers_file(CONSOLIDATED, suppliers_file)
     print("Completed! Consolidated items and items by order csv files generated!")

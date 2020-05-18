@@ -2,16 +2,23 @@
 
 - Consolidate orders by person
 - Consolidate orders by sales item
-- Get sales details
+- (NEW) Get sales details
+- (NEW) Consolidate supply by supplier
 
 ### Dependencies: 
 - Python3
 
+### Required files
+* `orders.csv`
+* `bundles.txt` 
+    - Update bundle information
+    - Leave one empty line between each bundle
+* `suppliers.txt`
+    - Update supplier and their goods information
+    - Leave one empty line between each supplier
+
 ### How to run
-1. Update Bundle Information under `bundles.txt`. Leave one empty line between each bundle.
-2. Save the orders csv in the same folder as this code. 
-3. Run `python run.py`
+1. Run `python run.py` or `python3 run.py`
 
-Note: Orders file has to be csv and filename has to be `orders.csv`
 
-Note2: Sorting happens as it takes the first capital letter of the item. 
+Note: Sorting happens as it takes the first capital letter of the item. 

@@ -1,7 +1,13 @@
 import csv
 from utils import generate_csv_file_name
 
-
+"""
+Returns CSV of Sales Details, including
+- Total Discount
+- Total Sales
+- Total Number of orders
+- Total Numbers of coupons used
+"""
 def write_sales_details_file(orders_file):
     total_discount = 0
     total_sales = 0
