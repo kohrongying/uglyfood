@@ -1,7 +1,7 @@
 # Uglyfood
 
 - Consolidate orders by person
-- Consolidate orders by sales item
+- Consolidate orders by sales item (NEW: Include address, contact number and area)
 - (NEW) Get sales details
 - (NEW) Consolidate supply by supplier
 
@@ -16,6 +16,10 @@
 * `suppliers.txt`
     - Update supplier and their goods information
     - Leave one empty line between each supplier
+* `postal_codes.txt`
+    - Update customer postal codes
+    - Leave one empty line between each area
+    - Use format: <name>: <postal_code>
 
 ### How to run
 1. Run `python run.py` or `python3 run.py`

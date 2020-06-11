@@ -84,6 +84,38 @@ def write_consolidated_items_file(CONSOLIDATED):
         writer.writerow([tup[1], tup[0]])
 
 
+POSTAL_CODES = None
+
+
+def get_area(postal_code):
+    if POSTAL_CODES is None:
+        return ""
+    else:
+        if postal_code in POSTAL_CODES:
+            return POSTAL_CODES[postal_code]
+        else:
+            return "KEY IN"
+
+
+def load_postal_codes(postal_codes_file):
+    file = open(postal_codes_file, 'r')
+    lines = file.readlines()
+    postal_codes = {}
+    area = ""
+    for line in lines:
+        line = line.strip()
+        if area == "":
+            area = line
+        else:
+            if line == "":
+                area = ""
+            else:
+                name, code = line.split(':')
+                postal_codes[code.strip()] = area
+    file.close()
+    return postal_codes
+
+
 def write_orders_by_person(BUNDLES, orders_file):
     output_file = open(generate_csv_file_name('items_by_order'), "w")
     writer = csv.writer(output_file)
@@ -94,7 +126,19 @@ def write_orders_by_person(BUNDLES, orders_file):
         for row in reader:
             order_number = row[1]
             name = row[3]
+            phone = row[5]
+            address = row[6]
+            country = row[9]
+            postal_code = row[10]
+            notes = ''
+            if len(row) > 22:
+                notes = row[22]
+
             writer.writerow([order_number, name])
+            writer.writerow(['Address', f'{address}, {country} {postal_code}'])
+            writer.writerow(['Phone number', phone])
+            writer.writerow(['Customer Notes', notes])
+            writer.writerow(['Area', get_area(postal_code)])
 
             order = row[11]
             PRODUCTS = addOrder(order, {})
@@ -110,16 +154,19 @@ if __name__ == '__main__':
     orders_file = 'orders.csv'
     suppliers_file = 'suppliers.txtt'
     bundles_file = 'bundles.txt'
+    postal_codes_file = 'postal_codes.txt'
 
     # Common utils / helpers
     BUNDLES = load_bundles(bundles_file)
     PRODUCTS = load_orders(orders_file)
     CONSOLIDATED = consolidate_bundles(PRODUCTS, BUNDLES)
+    if path.exists(postal_codes_file):
+        POSTAL_CODES = load_postal_codes(postal_codes_file)
 
     # write CSV calls
     write_consolidated_items_file(CONSOLIDATED)
     write_orders_by_person(BUNDLES, orders_file)
-    write_sales_details_file(orders_file)
-    if path.exists(suppliers_file):
-        write_suppliers_file(CONSOLIDATED, suppliers_file)
+    # write_sales_details_file(orders_file)
+    # if path.exists(suppliers_file):
+    #     write_suppliers_file(CONSOLIDATED, suppliers_file)
     print("Completed! Consolidated items and items by order csv files generated!")
